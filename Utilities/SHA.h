@@ -1,7 +1,12 @@
-#pragma once
+#ifndef SHA_H
+#define SHA_H
+
 #include <string>
 #include <cstdint>
 #include <QString>
+
+#include "debug.h"
+
 #define DIGEST_INTS 5 //number of 32bit integers per SHA1 digest
 #define BLOCK_INTS 16 // number of 32bit integers per SHA1 block
 
@@ -27,3 +32,5 @@ public:
     ~SHA();
     std::string FileHash(QString path, QString namedir);
 };
+
+#endif // SHA_H

@@ -1,7 +1,11 @@
-#pragma once
-#include <cstdint>
+#ifndef RSA_H
+#define RSA_H
+
 #include <string>
+#include <cstdint>
 #include <QString>
+
+#include "debug.h"
 
 #define SHA_LEN 40
 
@@ -39,4 +43,4 @@ public:
     bool Verification(QString pub_key, QString hash_enc, QString file, QString dirname);
 };
 
-
+#endif // RSA_H

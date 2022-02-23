@@ -1,11 +1,12 @@
 ﻿#include "RSA.h"
-#include <iostream>
-#include <fstream>
-#include <random>
-#include <iterator>
-#include <QFile>
-#include <QDir>
 #include "SHA.h"
+
+#include <QDir>
+#include <QFile>
+#include <fstream>
+#include <iterator>
+#include <iostream>
+#include <QRandomGenerator>
 
 RSA::RSA() {
 	open_exp = 0ull;
@@ -17,19 +18,17 @@ RSA::~RSA() {}
 
 void RSA::GenerateKey(QString namedir) {
 	uint64_t p = 0ull, q = 0ull, euler = 0ull;
-	std::random_device rd;
-	std::mt19937 mersenne(rd()); // initialize the Mersenne Twister with a random starting number
-	//generate p
-	do {
 
-		p = 5000ull + mersenne() % 20000;
-		if (IsPrime(p)) break;
-	} while (true);
-	//generate q
-	do {
-		q = 5000ull + mersenne() % 20000;
-		if (q != p && IsPrime(q)) break;
-	} while (true);
+    QRandomGenerator rand(time(0));
+    do {
+        p = 5000ull + rand.generate64() % 20000ull;
+        if (IsPrime(p)) break;
+    } while (true);
+    //generate q
+    do {
+        q = 5000ull + rand.generate64() % 20000ull;
+        if (q != p && IsPrime(q)) break;
+    } while (true);
 
 	//p = 3557;
 	//q = 2579;
@@ -63,11 +62,16 @@ void RSA::GenerateKey(QString namedir) {
 		privat_file << secret_exp << " " << modulus;
 	privat_file.close();
 
+#ifdef DEBUG
+    std::cout <<"p = "<< p << " q = " << q <<std::endl;
+
 	//Пара {e, n} публикуется в качестве открытого ключа RSA
     std::cout << "\nRSA public key is (n = " << modulus << ", e = " << open_exp << ")" << std::endl;
 
 	//Пара {d, n} играет роль закрытого ключа RSA и держится в секрете
     std::cout << "RSA private key is (n = " << modulus << ", d = " << secret_exp << ")" << std::endl;
+#endif
+
 }
 
 //miller-rabin test (start)
@@ -224,12 +228,12 @@ int8_t RSA::LoadMyKey(QString pub_key, QString priv_key) {
     secret_exp = data1.split(" ")[0].toULongLong();
     priv.close();
 
-	//Пара {e, n} публикуется в качестве открытого ключа RSA
+#ifdef DEBUG
     std::cout << "\nRSA public key is (n = " << modulus << ", e = " << open_exp << ")" << std::endl;
 
 	//Пара {d, n} играет роль закрытого ключа RSA и держится в секрете
     std::cout << "RSA private key is (n = " << modulus << ", d = " << secret_exp << ")" << std::endl;
-
+#endif
     if (open_exp >= secret_exp) return FILE_MIXED_UP;
     return OK;
 }

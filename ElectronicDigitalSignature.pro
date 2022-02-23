@@ -2,6 +2,8 @@ QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
+QMAKE_LFLAGS_RELEASE += -static -static-libgcc
+
 CONFIG += c++11
 
 # You can make your code fail to compile if it uses deprecated APIs.
@@ -17,6 +19,7 @@ SOURCES += \
 HEADERS += \
     Utilities/RSA.h \
     Utilities/SHA.h \
+    Utilities/debug.h \
     mainwindow.h
 
 FORMS += \

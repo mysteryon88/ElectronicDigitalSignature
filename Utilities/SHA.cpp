@@ -1,9 +1,9 @@
 #include "SHA.h"
 #include <sstream>
-#include <iostream>
 #include <iomanip>
 #include <fstream>
 #include <iterator>
+#include <iostream>
 
 /* Help macros */
 #define SHA_ROL(value, bits) (((value) << (bits)) | (((value) & 0xffffffff) >> (32 - (bits))))
@@ -51,8 +51,9 @@ std::string SHA::FileHash(QString path, QString namedir)
     if (hash_file.is_open())
         std::copy(hash.begin(), hash.end(), std::ostream_iterator<uint8_t>(hash_file));
     hash_file.close();
-
+#ifdef DEBUG
     std::cout << hash << " SHA" << std::endl;
+#endif
     return hash;
 }
 
