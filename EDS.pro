@@ -11,18 +11,24 @@ CONFIG += c++11
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    Forms/authentication.cpp \
+    Forms/registration.cpp \
     Utilities/RSA.cpp \
     Utilities/SHA.cpp \
     main.cpp \
     mainwindow.cpp
 
 HEADERS += \
+    Forms/authentication.h \
+    Forms/registration.h \
     Utilities/RSA.h \
     Utilities/SHA.h \
     Utilities/debug.h \
     mainwindow.h
 
 FORMS += \
+    Forms/authentication.ui \
+    Forms/registration.ui \
     mainwindow.ui
 
 # Default rules for deployment.

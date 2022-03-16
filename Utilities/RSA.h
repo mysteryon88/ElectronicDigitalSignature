@@ -16,6 +16,12 @@ enum ERRORS
     FILE_MIXED_UP
 };
 
+struct PubKey
+{
+    uint64_t modulus;   //n
+    uint64_t open_exp;  //e
+};
+
 class RSA
 {
 private:
@@ -38,6 +44,8 @@ public:
     RSA();
     ~RSA();
     void GenerateKey(QString namedir);
+    void GetPubKey(PubKey* key);
+    void PrintKeys();
     uint8_t Encrypt(QString namedir);
     int8_t LoadMyKey(QString pub_key, QString pri_key);
     bool Verification(QString pub_key, QString hash_enc, QString file, QString dirname);

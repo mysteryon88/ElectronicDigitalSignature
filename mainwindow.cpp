@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+
 #include <QMessageBox>
 #include <QFileDialog>
 
@@ -13,15 +14,6 @@ MainWindow::MainWindow(QWidget *parent)
 MainWindow::~MainWindow()
 {
     delete ui;
-}
-
-void MainWindow::on_GenerateKey_clicked()
-{
-    rsa.GenerateKey(namedir);
-    QMessageBox::information(this, "Success", "The keys have been generated");
-    ui->GenerateKey->setDisabled(true);
-    ui->LoadMyKeys->setDisabled(true);
-    ui->SingFile->setEnabled(true);
 }
 
 void MainWindow::on_LoadMyKeys_clicked()
@@ -40,7 +32,7 @@ void MainWindow::on_LoadMyKeys_clicked()
         QMessageBox::information(this, "Success", "Keys have been uploaded");
         break;
     }
-    ui->GenerateKey->setDisabled(true);
+
     ui->LoadMyKeys->setDisabled(true);
     ui->SingFile->setEnabled(true);
 }
@@ -62,23 +54,6 @@ void MainWindow::on_SingFile_clicked()
    }
 }
 
-
-void MainWindow::on_NewDir_clicked()
-{
-    namedir = ui->Name->text();
-
-    if (namedir.isEmpty()) {
-        QMessageBox::warning(this, "Warning", "You didn't enter a name");
-        return;
-    }
-    QDir dir;
-    dir.mkdir(namedir);
-    ui->GenerateKey->setEnabled(true);
-    ui->LoadMyKeys->setEnabled(true);
-    ui->Verification->setEnabled(true);
-}
-
-
 void MainWindow::on_Verification_clicked()
 {
     QString pub_key = QFileDialog::getOpenFileName(this, "Choose Public key file", "", "*.key");
@@ -93,5 +68,21 @@ void MainWindow::on_Verification_clicked()
     if (rsa.Verification(pub_key, enc, file, namedir))
         QMessageBox::information(this, "Success", "The signature is real");
     else QMessageBox::critical(this, "Warning", "The signature is not real");
+}
+
+
+void MainWindow::on_Registration_clicked()
+{
+    reg.Show(&rsa);
+}
+
+void MainWindow::on_SugnIn_clicked()
+{
+    auth.show();
+#ifdef DEBUG
+    rsa.PrintKeys();
+#endif
+    ui->LoadMyKeys->setEnabled(true);
+    ui->Verification->setEnabled(true);
 }
 

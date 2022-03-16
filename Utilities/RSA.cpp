@@ -261,3 +261,17 @@ bool RSA::Verification(QString pub_key, QString hash_enc, QString file, QString 
 	return decrypted_hash == hash_ ? true : false;
 }
 
+void RSA::GetPubKey(struct PubKey* key)
+{
+    key->modulus = modulus;
+    key->open_exp = open_exp;
+}
+
+
+void RSA::PrintKeys(){
+    std::cout << "\nRSA public key is (n = " << modulus << ", e = " << open_exp << ")" << std::endl;
+
+    //Пара {d, n} играет роль закрытого ключа RSA и держится в секрете
+    std::cout << "RSA private key is (n = " << modulus << ", d = " << secret_exp << ")" << std::endl;
+}
+
