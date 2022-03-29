@@ -4,8 +4,8 @@
 #include "Utilities/RSA.h"
 #include "Utilities/SHA.h"
 #include "Forms/registration.h"
-#include "Forms/authentication.h"
 #include <QMainWindow>
+#include "Utilities/client.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -24,13 +24,14 @@ private slots:
     void on_SingFile_clicked();
     void on_Verification_clicked();
     void on_Registration_clicked();
-    void on_SugnIn_clicked();
 
 private:
     Ui::MainWindow *ui;
+
     RSA rsa;
+    QString ip;
+    Client* cli;
     QString namedir;
     Registration reg;
-    Authentication auth;
 };
 #endif // MAINWINDOW_H

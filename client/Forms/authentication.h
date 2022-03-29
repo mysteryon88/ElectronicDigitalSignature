@@ -3,6 +3,8 @@
 
 #include <QWidget>
 
+#include <QTcpSocket>
+
 namespace Ui {
 class Authentication;
 }
@@ -15,6 +17,7 @@ public:
     explicit Authentication(QWidget *parent = nullptr);
     ~Authentication();
     QString namedir;
+    void closeEvent(QCloseEvent * e);
 
 private slots:
     void on_Cancel_clicked();
@@ -24,6 +27,7 @@ private slots:
 private:
     Ui::Authentication *ui;
     void Clear();
+
 };
 
 #endif // AUTHENTICATION_H

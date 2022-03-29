@@ -35,7 +35,10 @@ void Authentication::on_SignIn_clicked()
     QDir dir;
     dir.mkdir(namedir);
 
-    //send-to server
+    //send to server
+    QMessageBox::information(this, "Success", "You have successfully logged in");
+
+    Clear();
     close();
 }
 
@@ -46,3 +49,6 @@ void Authentication::Clear()
     ui->Name->clear();
 }
 
+void Authentication::closeEvent(QCloseEvent * e){
+    Clear();
+}

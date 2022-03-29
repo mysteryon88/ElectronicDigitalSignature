@@ -30,7 +30,7 @@ private:
 public:
     SHA();
     ~SHA();
-    std::string FileHash(QString path, QString namedir);
+    std::string FileHash(QString path);
 };
 
 #endif // SHA_H

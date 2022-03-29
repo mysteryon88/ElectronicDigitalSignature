@@ -16,7 +16,7 @@ RSA::RSA() {
 
 RSA::~RSA() {}
 
-void RSA::GenerateKey(QString namedir) {
+void RSA::GenerateKey() {
 	uint64_t p = 0ull, q = 0ull, euler = 0ull;
 
     QRandomGenerator rand(time(0));
@@ -24,14 +24,13 @@ void RSA::GenerateKey(QString namedir) {
         p = 5000ull + rand.generate64() % 20000ull;
         if (IsPrime(p)) break;
     } while (true);
+
     //generate q
     do {
         q = 5000ull + rand.generate64() % 20000ull;
         if (q != p && IsPrime(q)) break;
     } while (true);
 
-	//p = 3557;
-	//q = 2579;
 	//Their product n = p*q is calculated, which is called the modulus.
 	modulus = p * q;
 
@@ -45,7 +44,7 @@ void RSA::GenerateKey(QString namedir) {
 	secret_exp = CalculateD(open_exp, euler); //d
 
 	//writing to file
-    QString pub_ke = namedir + "/public.key";
+    QString pub_ke = "public.key";
 
 	std::ofstream public_file;
     public_file.open(pub_ke.toLocal8Bit());
@@ -54,7 +53,7 @@ void RSA::GenerateKey(QString namedir) {
 	public_file.close();
 
 	//writing to file
-    QString pri_ke = namedir + "/privat.key";
+    QString pri_ke = "privat.key";
 
 	std::ofstream privat_file;
     privat_file.open(pri_ke.toLocal8Bit());
@@ -167,12 +166,10 @@ int64_t RSA::gcdex(int64_t a, int64_t b, int64_t& x, int64_t& y) {
 }
 //Calculate secret exponent (end)
 
-uint8_t RSA::Encrypt(QString namedir) {
+uint8_t RSA::Encrypt() {
 	std::string data;
 
-    QString path = namedir + "/file.hash";
-
-    std::ifstream hash(path.toLocal8Bit()); // open file with hash
+    std::ifstream hash("file.hash"); // open file with hash
     if (!hash.is_open()) return FILE_NOT_OPEN;
     getline(hash, data);
 	hash.close();
@@ -181,7 +178,7 @@ uint8_t RSA::Encrypt(QString namedir) {
 
 	for(size_t i = 0; i < SHA_LEN; ++i)
 		encrypt_hash[i] = Binpower(data[i], secret_exp, modulus);//---------------------------------------------------
-    QString sign = namedir + "/signed.enc";
+    QString sign = "signed.enc";
 
 	std::ofstream encrypted;
     encrypted.open(sign.toLocal8Bit());
@@ -211,21 +208,14 @@ std::string RSA::Decipher(QString path) {
 	return tmp;
 }
 
-int8_t RSA::LoadMyKey(QString pub_key, QString priv_key) {
-
-    QFile pub(pub_key);
-    if (!pub.open(QIODevice::ReadOnly)) return FILE_NOT_OPEN;
-
-    QString data = pub.readAll();
-    open_exp = data.split(" ")[0].toULongLong();
-    modulus = data.split(" ")[1].toULongLong();
-	pub.close();
+int8_t RSA::LoadMyKey(QString priv_key) {
 
     QFile priv(priv_key);
     if (!priv.open(QIODevice::ReadOnly)) return FILE_NOT_OPEN;
 
     QString data1 = priv.readAll();
     secret_exp = data1.split(" ")[0].toULongLong();
+    modulus = data1.split(" ")[1].toULongLong();
     priv.close();
 
 #ifdef DEBUG
@@ -234,26 +224,22 @@ int8_t RSA::LoadMyKey(QString pub_key, QString priv_key) {
 	//Пара {d, n} играет роль закрытого ключа RSA и держится в секрете
     std::cout << "RSA private key is (n = " << modulus << ", d = " << secret_exp << ")" << std::endl;
 #endif
-    if (open_exp >= secret_exp) return FILE_MIXED_UP;
     return OK;
 }
 
-bool RSA::Verification(QString pub_key, QString hash_enc, QString file, QString dirname) {
+bool RSA::Verification( QString hash_enc, QString file) {
 
 	uint64_t modulus_tmp = modulus;
 	uint64_t open_exp_tmp = open_exp;
 
-    std::ifstream pub(pub_key.toLocal8Bit());
-
-	if (pub.is_open())
-		pub >> open_exp >> modulus;
-	pub.close();
+    open_exp = pub_key.open_exp;
+    modulus = pub_key.modulus;
 
     std::string decrypted_hash = Decipher(hash_enc);
 
     SHA orig;
 
-    std::string hash_= orig.FileHash(file, dirname);
+    std::string hash_= orig.FileHash(file);
 
 	modulus = modulus_tmp;
 	open_exp = open_exp_tmp;
@@ -271,7 +257,6 @@ void RSA::GetPubKey(struct PubKey* key)
 void RSA::PrintKeys(){
     std::cout << "\nRSA public key is (n = " << modulus << ", e = " << open_exp << ")" << std::endl;
 
-    //Пара {d, n} играет роль закрытого ключа RSA и держится в секрете
     std::cout << "RSA private key is (n = " << modulus << ", d = " << secret_exp << ")" << std::endl;
 }
 

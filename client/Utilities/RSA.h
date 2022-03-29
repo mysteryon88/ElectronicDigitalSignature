@@ -43,12 +43,13 @@ private:
 public:
     RSA();
     ~RSA();
-    void GenerateKey(QString namedir);
+    void GenerateKey();
     void GetPubKey(PubKey* key);
     void PrintKeys();
-    uint8_t Encrypt(QString namedir);
-    int8_t LoadMyKey(QString pub_key, QString pri_key);
-    bool Verification(QString pub_key, QString hash_enc, QString file, QString dirname);
+    uint8_t Encrypt();
+    int8_t LoadMyKey(QString pri_key);
+    bool Verification(QString hash_enc, QString file);
+    PubKey pub_key;
 };
 
 #endif // RSA_H

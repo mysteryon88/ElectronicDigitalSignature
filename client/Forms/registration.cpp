@@ -25,18 +25,15 @@ void Registration::on_Cancel_clicked()
 void Registration::on_Register_clicked()
 {
     QString e_mail = ui->Email->text();
-    QString pass = ui->Pass->text();
     QString name = ui->Name->text();
     QString surname = ui->Surname->text();
     QString pat = ui->Patronyic->text();
-    if (e_mail.isEmpty() || pass.isEmpty()|| name.isEmpty() || surname.isEmpty() || pat.isEmpty()){
+    if (e_mail.isEmpty() || name.isEmpty() || surname.isEmpty() || pat.isEmpty()){
         QMessageBox::warning(this, "Warning", "All fields must be filled");
         return;
     }
-    QDir dir;
-    dir.mkdir(name);
 
-    rsaptr->GenerateKey(name);
+    rsaptr->GenerateKey();
     rsaptr->GetPubKey(&key);
 
     QMessageBox::information(this, "Success", "The keys have been generated, you have been registered");
@@ -45,20 +42,30 @@ void Registration::on_Register_clicked()
 #endif
 
     //send to server
+    //Type Name Surname Patron Modulus Open_exp Email
+    QString msg = "1 " + name + " " + surname + " " + pat +
+                  " " + QString::number(key.modulus) + " " +
+                  QString::number(key.open_exp) + " " + e_mail;
+    cliptr->SendToServer(msg);
+
     Clear();
     close();
 }
 
-void Registration::Show(RSA* rsa){
+void Registration::Show(RSA* rsa,  Client* cli){
     show();
     rsaptr = rsa;
+    cliptr = cli;
 }
 
 void Registration::Clear()
 {
     ui->Email->clear();
-    ui->Pass->clear();
     ui->Name->clear();
     ui->Surname->clear();
     ui->Patronyic->clear();
+}
+
+void Registration::closeEvent(QCloseEvent * e){
+    Clear();
 }

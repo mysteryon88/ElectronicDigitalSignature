@@ -1,9 +1,12 @@
 #ifndef REGISTRATION_H
 #define REGISTRATION_H
 
+#include <Utilities/client.h>
 #include <QWidget>
 #include "Utilities/RSA.h"
 #include <cstdint>
+
+#include <QTcpSocket>
 
 namespace Ui {
 class Registration;
@@ -16,9 +19,9 @@ class Registration : public QWidget
 public:
     explicit Registration(QWidget *parent = nullptr);
     ~Registration();
-    void Show(RSA* rsa);
-    RSA* rsaptr;
+    void Show(RSA* rsa, Client* cli);
     PubKey key;
+    void closeEvent(QCloseEvent * e);
 
 private slots:
     void on_Cancel_clicked();
@@ -26,6 +29,8 @@ private slots:
 
 private:
     Ui::Registration *ui;
+    Client* cliptr;
+    RSA* rsaptr;
     void Clear();
 };
 

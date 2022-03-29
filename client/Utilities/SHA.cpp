@@ -10,7 +10,7 @@
 #define SHA_BLK(i) (block[i&15] = SHA_ROL(block[(i+13)&15] ^ block[(i+8)&15] ^ block[(i+2)&15] ^ block[i&15],1))
 
 /* (R0+R1), R2, R3, R4 are the different operations used in SHA */
-#define SHA_R0(v,w,x,y,z,i) z += ((w&(x^y))^y)     + block[i]    + 0x5a827999 + SHA_ROL(v,5); w=SHA_ROL(w,30);
+#define SHA_R0(v,w,x,y,z,i) z += ((w&(x^y))^y)     + block[i]   + 0x5a827999 + SHA_ROL(v,5); w=SHA_ROL(w,30);
 #define SHA_R1(v,w,x,y,z,i) z += ((w&(x^y))^y)     + SHA_BLK(i) + 0x5a827999 + SHA_ROL(v,5); w=SHA_ROL(w,30);
 #define SHA_R2(v,w,x,y,z,i) z += (w^x^y)           + SHA_BLK(i) + 0x6ed9eba1 + SHA_ROL(v,5); w=SHA_ROL(w,30);
 #define SHA_R3(v,w,x,y,z,i) z += (((w|x)&y)|(w&x)) + SHA_BLK(i) + 0x8f1bbcdc + SHA_ROL(v,5); w=SHA_ROL(w,30);
@@ -35,7 +35,7 @@ void SHA::Reset() {
     buffer = "";
 }
 
-std::string SHA::FileHash(QString path, QString namedir)
+std::string SHA::FileHash(QString path)
 {
     std::ifstream stream(path.toLocal8Bit(), std::ios::binary);
 
@@ -45,7 +45,7 @@ std::string SHA::FileHash(QString path, QString namedir)
     stream.close();
 
     std::ofstream hash_file;
-    QString hash_path = namedir + "/file.hash";
+    QString hash_path = "file.hash";
 
     hash_file.open(hash_path.toLocal8Bit());
     if (hash_file.is_open())
