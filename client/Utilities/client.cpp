@@ -43,8 +43,8 @@ void Client::slotReadyRead()
 #ifdef DEBUG
         std::cout << mes_.toStdString() << std::endl;
 #endif
-        mes_[0] = 0;
-        mes_[1] = 0;
+        mes_[0] = '0';
+        mes_[1] = '0';
         QStringList list;
         switch (type) {
         case 1:

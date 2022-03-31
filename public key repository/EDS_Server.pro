@@ -3,9 +3,12 @@ QT -= gui
 CONFIG += c++11 console
 CONFIG -= app_bundle
 
-QMAKE_LFLAGS_RELEASE += -static -static-libgcc
+QMAKE_LFLAGS_RELEASE += -static -static-libgcc 
 
 QT += network
+
+#Qt6 for QTextCodec
+#QT += core5compat
 
 QT += sql
 

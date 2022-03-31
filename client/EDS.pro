@@ -6,6 +6,9 @@ QMAKE_LFLAGS_RELEASE += -static -static-libgcc
 
 QT += network
 
+#Qt6 for QTextCodec
+#QT += core5compat
+
 CONFIG += c++11
 
 # You can make your code fail to compile if it uses deprecated APIs.

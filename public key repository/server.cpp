@@ -60,8 +60,8 @@ void  Server::Parser(QString& mes, QTcpSocket* pSocket){
     */
 
     int32_t type = mes[2].unicode() - 48;
-    mes[0] = 0;
-    mes[1] = 0;
+    mes[0] = '0';
+    mes[1] = '0';
     std::cout << mes.toStdString() << std::endl;
     QStringList list;
     switch (type) {
