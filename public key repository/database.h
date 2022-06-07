@@ -32,6 +32,8 @@ public:
     bool InserIntoTable(const QString &fname, const QString &sname,
                         const QString &pat,   const QString &mod,
                         const QString &exp,   const QString &e_mail);
+    bool CheckClient(const QString &e_mail);
+
 private:
 
     QSqlDatabase    db;

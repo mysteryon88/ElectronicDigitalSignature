@@ -87,7 +87,8 @@ bool Database::InserIntoTable(const QVariantList &data)
     query.bindValue(":Email",       data[5].toString());
 
 
-    if(!query.exec()) {
+    if(!query.exec())
+    {
         std::cout <<  "Database: Error insert into " << TABLE << std::endl;
         std::cout << query.lastError().text().toStdString() << std::endl;
         return false;
@@ -132,7 +133,8 @@ QString Database::FindKey(const QString email)
     QSqlQuery query;
     query.prepare("SELECT Modulus, Open_exp FROM " TABLE " WHERE Email = '" + email + "'");
 
-    if (!query.exec()) {
+    if (!query.exec())
+    {
         std::cout << "Database: error of select " << TABLE << std::endl;
         std::cout << query.lastError().text().toStdString() << std::endl;
         return "err1";

@@ -7,14 +7,22 @@
 Server::Server(int* port, QString ipv4, QObject *parent)
     : QObject{parent}
 {
+    //обработку ввода нового порта
     ptrServer = new QTcpServer();
     connect(ptrServer, SIGNAL(newConnection()), this, SLOT(slotNewConnection()));
-    if (!ptrServer->listen(QHostAddress(ipv4), *port)) {
-        std::cout << "Server Error, enter free port" << std::endl;
-            ptrServer->close();
-            return;
+    while(true)
+    {
+        if (ptrServer->listen(QHostAddress(ipv4), *port))
+        {
+            std::cout << "Server is running" << std::endl;
+            //ptrServer->close();
+            break;
+        }
+        std::cout << "Server Error, enter free port\n>> ";
+
+        if(!(std::cin >> *port).fail()) continue;
     }
-    std::cout << "Server is running" << std::endl;
+
     db.ConnectDatabase();
 }
 
@@ -64,7 +72,8 @@ void  Server::Parser(QString& mes, QTcpSocket* pSocket){
     mes[1] = '0';
     std::cout << mes.toStdString() << std::endl;
     QStringList list;
-    switch (type) {
+    switch (type)
+    {
     case 1:
         list = mes.split(' ');
         if(db.InserIntoTable(list.at(1), list.at(2), list.at(3), list.at(4), list.at(5), list.at(6)))

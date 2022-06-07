@@ -29,34 +29,36 @@ QString run(int* port)
     QString ipv4_, choose;
     QTextStream cin(stdin);
 
-    do {
-
+    do
+    {
         for(int i = 0; i < inter_.size(); ++i)
         {
             QHostAddress ipv4(inter_[i].toIPv4Address());
             ipv4_ = ipv4.toString();
             std::cout << i << "]" << ipv4_.toStdString() << std::endl;
         }
-
-        if(!(std::cin >> ip).fail() && ip < inter_.size()) {
+        std::cout << ">> ";
+        if(!(std::cin >> ip).fail() && ip < inter_.size())
+        {
 
             QHostAddress ipv4(inter_[ip].toIPv4Address());
             ipv4_ = ipv4.toString();
 
-            std::cout << "You choosed: " << ipv4_.toStdString() << " Y/N?" << std::endl;
+            std::cout << "You choosed: " << ipv4_.toStdString() << " Y/N?\n>> ";
 
             cin >> choose;
 
             if(choose == "y" || choose == "Y") break;
         }
-        else {
-            std::cout << "Enter again!" << std::endl;
+        else
+        {
+            std::cout << "Enter again! \n>> ";
             std::cin.clear();
             std::cin.ignore(100,'\n');
         }
     } while(true);
 
-    std::cout << "Enter a free port: "<< std::endl;
+    std::cout << "Enter a free port: \n>> ";
     std::cin >> *port;
 
     return ipv4_;
