@@ -6,6 +6,7 @@
 #include "Forms/registration.h"
 #include <QMainWindow>
 #include "Utilities/client.h"
+#include "Forms/pass.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -19,19 +20,21 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+
+
 private slots:
     void on_LoadMyKeys_clicked();
     void on_SingFile_clicked();
     void on_Verification_clicked();
     void on_Registration_clicked();
-
+    void slotEnable();
 private:
     Ui::MainWindow *ui;
-
     RSA rsa;
-    QString ip;
     Client* cli;
-    QString namedir;
     Registration reg;
+    Pass pass;
+
+
 };
 #endif // MAINWINDOW_H

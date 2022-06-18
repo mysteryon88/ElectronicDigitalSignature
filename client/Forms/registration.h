@@ -20,7 +20,7 @@ public:
     explicit Registration(QWidget *parent = nullptr);
     ~Registration();
     void Show(RSA* rsa, Client* cli);
-    PubKey key;
+    Key key;
     void closeEvent(QCloseEvent * e);
 
 private slots:

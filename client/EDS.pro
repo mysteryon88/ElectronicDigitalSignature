@@ -2,7 +2,7 @@ QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-QMAKE_LFLAGS_RELEASE += -static -static-libgcc
+#QMAKE_LFLAGS_RELEASE += -static -static-libgcc
 
 QT += network
 
@@ -16,7 +16,9 @@ CONFIG += c++11
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    Forms/pass.cpp \
     Forms/registration.cpp \
+    Utilities/RC4.cpp \
     Utilities/RSA.cpp \
     Utilities/SHA.cpp \
     Utilities/client.cpp \
@@ -24,7 +26,9 @@ SOURCES += \
     mainwindow.cpp
 
 HEADERS += \
+    Forms/pass.h \
     Forms/registration.h \
+    Utilities/RC4.h \
     Utilities/RSA.h \
     Utilities/SHA.h \
     Utilities/client.h \
@@ -32,6 +36,7 @@ HEADERS += \
     mainwindow.h
 
 FORMS += \
+    Forms/pass.ui \
     Forms/registration.ui \
     mainwindow.ui
 
@@ -44,4 +49,5 @@ RESOURCES +=
 RC_FILE = resourse.rc
 
 DISTFILES += \
+    Utilities/main.ico \
     resourse.rc

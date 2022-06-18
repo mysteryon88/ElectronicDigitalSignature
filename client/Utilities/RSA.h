@@ -16,10 +16,10 @@ enum ERRORS
     FILE_MIXED_UP
 };
 
-struct PubKey
+struct Key
 {
     uint64_t modulus;   //n
-    uint64_t open_exp;  //e
+    uint64_t exp;       //e/d
 };
 
 class RSA
@@ -44,12 +44,13 @@ public:
     RSA();
     ~RSA();
     void GenerateKey();
-    void GetPubKey(PubKey* key);
+    void GetPubKey(Key* key);
+    void GetPriKey(Key* key);
     void PrintKeys();
-    uint8_t Encrypt();
-    int8_t LoadMyKey(QString pri_key);
+    uint8_t Encrypt(std::string data);
+    int8_t LoadMyKey(uint64_t d, uint64_t n);
     bool Verification(QString hash_enc, QString file);
-    PubKey pub_key;
+    Key pub_key;
 };
 
 #endif // RSA_H

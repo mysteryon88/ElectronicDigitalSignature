@@ -44,16 +44,10 @@ std::string SHA::FileHash(QString path)
     std::string hash = final();
     stream.close();
 
-    std::ofstream hash_file;
-    QString hash_path = "file.hash";
-
-    hash_file.open(hash_path.toLocal8Bit());
-    if (hash_file.is_open())
-        std::copy(hash.begin(), hash.end(), std::ostream_iterator<uint8_t>(hash_file));
-    hash_file.close();
 #ifdef DEBUG
     std::cout << hash << " SHA" << std::endl;
 #endif
+
     return hash;
 }
 

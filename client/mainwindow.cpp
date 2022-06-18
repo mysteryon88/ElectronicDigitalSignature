@@ -9,7 +9,7 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    cli = new Client("localhost", 1024, &rsa);
+    cli = new Client(HOST, PORT, &rsa, this); //connect to server
 }
 
 MainWindow::~MainWindow()
@@ -19,20 +19,8 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_LoadMyKeys_clicked()
 {
-
-    QString privat_key = QFileDialog::getOpenFileName(this, "Choose Private key file", "", "*.key");
-
-    switch(rsa.LoadMyKey(privat_key)){
-    case FILE_NOT_OPEN:
-        QMessageBox::warning(this, "Warning", "File did not open");
-        return;
-        break;
-    default:
-        QMessageBox::information(this, "Success", "Keys have been uploaded");
-        break;
-    }
-
-    ui->SingFile->setEnabled(true);
+    connect(&pass, SIGNAL(Good()), this, SLOT(slotEnable()));
+    pass.Show(&rsa);
 }
 
 
@@ -40,11 +28,15 @@ void MainWindow::on_SingFile_clicked()
 {
    QString file = QFileDialog::getOpenFileName(this, "Choose file", "", "All files (*)");
    SHA hash;
-   hash.FileHash(file);
-
-   switch(rsa.Encrypt()){
+   if (file.isEmpty())
+   {
+       QMessageBox::warning(this, "Warning", "Choose the file!");
+       return;
+   }
+   switch(rsa.Encrypt(hash.FileHash(file)))
+   {
    case FILE_NOT_OPEN:
-       QMessageBox::warning(this, "Warning", "File did not open");
+       QMessageBox::warning(this, "Warning", "File did not open!");
        break;
    default:
        QMessageBox::information(this, "Success", "The file is signed (signed.enc)");
@@ -56,7 +48,8 @@ void MainWindow::on_Verification_clicked()
 {
     QString e_mail = ui->Email->text();
 
-    if(e_mail.isEmpty()){
+    if(e_mail.isEmpty())
+    {
         QMessageBox::warning(this, "Warning", "You didn't enter the sender's email");
         return;
     }
@@ -87,4 +80,8 @@ void MainWindow::on_Registration_clicked()
     reg.Show(&rsa, cli);
 }
 
+void MainWindow::slotEnable()
+{
+    ui->SingFile->setEnabled(true);
+}
 

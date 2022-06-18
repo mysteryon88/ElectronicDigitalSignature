@@ -8,7 +8,8 @@
 #include <iostream>
 #include <QRandomGenerator>
 
-RSA::RSA() {
+RSA::RSA()
+{
 	open_exp = 0ull;
 	secret_exp = 0ull;
 	modulus = 0ull;
@@ -16,17 +17,20 @@ RSA::RSA() {
 
 RSA::~RSA() {}
 
-void RSA::GenerateKey() {
+void RSA::GenerateKey()
+{
 	uint64_t p = 0ull, q = 0ull, euler = 0ull;
 
     QRandomGenerator rand(time(0));
-    do {
+    do
+    {
         p = 5000ull + rand.generate64() % 20000ull;
         if (IsPrime(p)) break;
     } while (true);
 
     //generate q
-    do {
+    do
+    {
         q = 5000ull + rand.generate64() % 20000ull;
         if (q != p && IsPrime(q)) break;
     } while (true);
@@ -42,49 +46,23 @@ void RSA::GenerateKey() {
 	open_exp = CalculateE(euler);			  //e
 
 	secret_exp = CalculateD(open_exp, euler); //d
-
-	//writing to file
-    QString pub_ke = "public.key";
-
-	std::ofstream public_file;
-    public_file.open(pub_ke.toLocal8Bit());
-	if (public_file.is_open()) 
-		public_file << open_exp << " " << modulus;
-	public_file.close();
-
-	//writing to file
-    QString pri_ke = "privat.key";
-
-	std::ofstream privat_file;
-    privat_file.open(pri_ke.toLocal8Bit());
-	if (privat_file.is_open())
-		privat_file << secret_exp << " " << modulus;
-	privat_file.close();
-
-#ifdef DEBUG
-    std::cout <<"p = "<< p << " q = " << q <<std::endl;
-
-	//Пара {e, n} публикуется в качестве открытого ключа RSA
-    std::cout << "\nRSA public key is (n = " << modulus << ", e = " << open_exp << ")" << std::endl;
-
-	//Пара {d, n} играет роль закрытого ключа RSA и держится в секрете
-    std::cout << "RSA private key is (n = " << modulus << ", d = " << secret_exp << ")" << std::endl;
-#endif
-
 }
 
 //miller-rabin test (start)
 
-bool RSA::IsPrime(uint64_t n, uint16_t iter) {
+bool RSA::IsPrime(uint64_t n, uint16_t iter)
+{
 	if (n < 4) return n == 2 || n == 3;
 
 	uint16_t s = 0;
 	uint64_t d = n - 1;
-	while ((d & 1) == 0) {
+    while ((d & 1) == 0)
+    {
 		d >>= 1;
 		s++;
 	}
-	for (uint16_t i = 0; i < iter; i++) {
+    for (uint16_t i = 0; i < iter; i++)
+    {
 		uint32_t a = 2 + rand() % (n - 3);
 		if (CheckComposite(n, a, d, s))
 			return false;
@@ -96,7 +74,8 @@ bool RSA::CheckComposite(uint64_t n, uint64_t a, uint64_t d, int32_t s) {
 	uint64_t x = Binpower(a, d, n);
 	if (x == 1 || x == n - 1)
 		return false;
-	for (int r = 1; r < s; r++) {
+    for (int r = 1; r < s; r++)
+    {
 		x = (uint64_t)x * x % n;
 		if (x == n - 1)
 			return false;
@@ -108,7 +87,8 @@ bool RSA::CheckComposite(uint64_t n, uint64_t a, uint64_t d, int32_t s) {
 uint64_t RSA::Binpower(uint64_t base, uint64_t e, uint64_t mod) {
 	uint64_t result = 1;
 	base %= mod;
-	while (e) {
+    while (e)
+    {
 		if (e & 1)
 			result = (uint64_t)result * base % mod;
 		base = (uint64_t)base * base % mod;
@@ -130,10 +110,12 @@ uint64_t RSA::CalculateE(uint64_t t) {
 	return -1;
 }
 
-uint64_t RSA::GreatestCommonDivisor(uint64_t e, uint64_t t) {
+uint64_t RSA::GreatestCommonDivisor(uint64_t e, uint64_t t)
+{
 	uint64_t temp;
 
-	while (e > 0){
+    while (e > 0)
+    {
 		temp = e;
 		e = t % e;
 		t = temp;
@@ -144,7 +126,8 @@ uint64_t RSA::GreatestCommonDivisor(uint64_t e, uint64_t t) {
 
 //Reverse modulo
 //Calculate secret exponent (start)
-int64_t RSA::CalculateD(int64_t a, int64_t m) {
+int64_t RSA::CalculateD(int64_t a, int64_t m)
+{
 	int64_t x, y;
 	gcdex(a, m, x, y);
 	x = (x % m + m) % m;
@@ -152,7 +135,8 @@ int64_t RSA::CalculateD(int64_t a, int64_t m) {
 }
 
 // Extended Euclid algorithm
-int64_t RSA::gcdex(int64_t a, int64_t b, int64_t& x, int64_t& y) {
+int64_t RSA::gcdex(int64_t a, int64_t b, int64_t& x, int64_t& y)
+{
 	if (a == 0) {
 		x = 0;
 		y = 1;
@@ -166,29 +150,26 @@ int64_t RSA::gcdex(int64_t a, int64_t b, int64_t& x, int64_t& y) {
 }
 //Calculate secret exponent (end)
 
-uint8_t RSA::Encrypt() {
-	std::string data;
-
-    std::ifstream hash("file.hash"); // open file with hash
-    if (!hash.is_open()) return FILE_NOT_OPEN;
-    getline(hash, data);
-	hash.close();
-
+uint8_t RSA::Encrypt(std::string data)
+{
 	std::vector<uint64_t> encrypt_hash(SHA_LEN);
 
 	for(size_t i = 0; i < SHA_LEN; ++i)
-		encrypt_hash[i] = Binpower(data[i], secret_exp, modulus);//---------------------------------------------------
-    QString sign = "signed.enc";
+        encrypt_hash[i] = Binpower(data[i], secret_exp, modulus);
 
+    QString sign = "signed.enc";
 	std::ofstream encrypted;
     encrypted.open(sign.toLocal8Bit());
+
     if (!encrypted.is_open()) return FILE_NOT_OPEN;
+
     std::copy(encrypt_hash.begin(), encrypt_hash.end(), std::ostream_iterator<uint64_t>(encrypted, " "));
 	encrypted.close();
     return OK;
 }
 
-std::string RSA::Decipher(QString path) {
+std::string RSA::Decipher(QString path)
+{
     std::ifstream encrypted(path.toLocal8Bit()); // open file with encrypted hash
 	std::vector<uint64_t> encrypted_hash(SHA_LEN); 
 
@@ -208,31 +189,20 @@ std::string RSA::Decipher(QString path) {
 	return tmp;
 }
 
-int8_t RSA::LoadMyKey(QString priv_key) {
-
-    QFile priv(priv_key);
-    if (!priv.open(QIODevice::ReadOnly)) return FILE_NOT_OPEN;
-
-    QString data1 = priv.readAll();
-    secret_exp = data1.split(" ")[0].toULongLong();
-    modulus = data1.split(" ")[1].toULongLong();
-    priv.close();
-
-#ifdef DEBUG
-    std::cout << "\nRSA public key is (n = " << modulus << ", e = " << open_exp << ")" << std::endl;
-
-	//Пара {d, n} играет роль закрытого ключа RSA и держится в секрете
-    std::cout << "RSA private key is (n = " << modulus << ", d = " << secret_exp << ")" << std::endl;
-#endif
+int8_t RSA::LoadMyKey(uint64_t d, uint64_t n)
+{
+    modulus = n;
+    secret_exp = d;
     return OK;
 }
 
-bool RSA::Verification( QString hash_enc, QString file) {
+bool RSA::Verification(QString hash_enc, QString file)
+{
 
 	uint64_t modulus_tmp = modulus;
 	uint64_t open_exp_tmp = open_exp;
 
-    open_exp = pub_key.open_exp;
+    open_exp = pub_key.exp;
     modulus = pub_key.modulus;
 
     std::string decrypted_hash = Decipher(hash_enc);
@@ -247,16 +217,21 @@ bool RSA::Verification( QString hash_enc, QString file) {
 	return decrypted_hash == hash_ ? true : false;
 }
 
-void RSA::GetPubKey(struct PubKey* key)
+void RSA::GetPubKey(struct Key* key)
 {
     key->modulus = modulus;
-    key->open_exp = open_exp;
+    key->exp = open_exp;
 }
 
+void RSA::GetPriKey(struct Key* key)
+{
+    key->modulus = modulus;
+    key->exp = secret_exp;
+}
 
-void RSA::PrintKeys(){
+void RSA::PrintKeys()
+{
     std::cout << "\nRSA public key is (n = " << modulus << ", e = " << open_exp << ")" << std::endl;
-
     std::cout << "RSA private key is (n = " << modulus << ", d = " << secret_exp << ")" << std::endl;
 }
 

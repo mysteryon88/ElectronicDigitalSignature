@@ -4,8 +4,8 @@
 #include <QTextCodec>
 #include <iostream>
 
-Client::Client(const QString& strHost, int nPort, RSA* rsa_, QObject *parent)
-    : QObject{parent}, NextBlockSize(0)
+Client::Client(const QString& strHost, int nPort, RSA* rsa_, QWidget *main, QObject *parent)
+    : QObject{parent}, NextBlockSize(0), Main(main)
 {
     TcpSocket = new QTcpSocket(this);
 
@@ -26,8 +26,8 @@ void Client::slotReadyRead()
         {
             mes = TcpSocket->readAll();
             mes_ = QTextCodec::codecForName("UTF-16BE")->toUnicode(mes);
-            qDebug() << mes;
 #ifdef DEBUG
+            qDebug() << mes;
             std::cout << mes_.toStdString() << std::endl;
 #endif
         }
@@ -49,7 +49,6 @@ void Client::slotReadyRead()
         switch (type) {
         case 1:
             list = mes_.split(' ');
-
             break;
         case 2:
             list = mes_.split(' ');
@@ -58,11 +57,9 @@ void Client::slotReadyRead()
             qDebug() << list.at(2).toULongLong();
 #endif
             rsa->pub_key.modulus = list.at(1).toULongLong();
-            rsa->pub_key.open_exp = list.at(2).toULongLong();
+            rsa->pub_key.exp = list.at(2).toULongLong();
             break;
         }
-
-
 }
 
 void Client::slotError(QAbstractSocket::SocketError err)
@@ -75,6 +72,8 @@ void Client::slotError(QAbstractSocket::SocketError err)
                      err == QAbstractSocket::ConnectionRefusedError ?
                      "The connection was refused." :
                      QString(TcpSocket->errorString()));
+
+    QMessageBox::critical(Main, "Warning", strError);
 }
 
 void Client::SendToServer(const QString& str)
